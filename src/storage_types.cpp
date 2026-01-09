@@ -14,3 +14,19 @@ void return_queue_type(QueueType t) {
         break;
     }
 }
+
+Package PackageQueue::pop() {
+  if (qt == QueueType::Fifo) {
+      Package p = packages.pop_front();
+  }
+  else if (qt == QueueType::Lifo) {
+      Package p = packages.pop_back();
+  }
+  else {
+    throw std::invalid_argument("Invalid QueueType");
+  }
+  }
+
+void PackageQueue::push( Package&& p) {
+  packages.push_front(p);
+}
