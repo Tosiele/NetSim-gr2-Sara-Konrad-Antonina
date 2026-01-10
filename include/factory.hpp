@@ -15,4 +15,16 @@ class NodeCollection {
 
 };
 
+class Factory{
+    public:
+
+
+    private:
+        template<class Node>
+        void remove_receiver(NodeCollection<Node>& collection, ElementID id);
+
+
+
+}
+
 #endif //FACTORY_HPP
