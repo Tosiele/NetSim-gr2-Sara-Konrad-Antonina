@@ -25,14 +25,18 @@ class NodeCollection {
 };
 
 class Factory{
-    public:
-
-
     private:
         template<class Node>
         void remove_receiver(NodeCollection<Node>& collection, element_ID id);
 
+    
+    public:
 
+    void do_deliveries(Time);
+    void do_package_passing(void);
+    void do_work(Time);
+
+    
 
 };
 
