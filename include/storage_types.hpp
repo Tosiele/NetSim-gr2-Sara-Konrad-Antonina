@@ -8,11 +8,11 @@
 #include "types.hpp"
 #include <list>
 #include "Package.hpp"
-#include "storage_types.cpp"
-enum class QueueType {
+  enum class QueueType {
     Fifo, Lifo
-
 };
+
+void return_queue_type(QueueType t);
 
 class IPackageStockpile {
   public:
@@ -25,16 +25,16 @@ class IPackageStockpile {
     const const_iterator cbegin() const { return packages.cbegin(); }
     const const_iterator cend() const { return packages.cend(); }
 
-    unsigned long long size() const { return packages.size(); }
-    bool empty() const { return packages.empty(); }
+    const unsigned long long size() const { return packages.size(); }
+    const bool empty() const { return packages.empty(); }
   private:
-    std::list<IPackageStockpile*> packages;
+  std::list<IPackageStockpile*> packages;
 };
 
 class IPackageQueue : public IPackageStockpile {
   public:
     virtual Package pop() = 0;
-    auto get_queue_type() { return return_queue_type(qt); }
+    const auto get_queue_type() { return return_queue_type(qt); }
     virtual ~IPackageQueue() {}
   private:
     QueueType qt;
@@ -44,10 +44,10 @@ class PackageQueue : public IPackageQueue {
   public:
     explicit PackageQueue(const QueueType t) : qt(t) { qt = t; }
     Package pop() override;
-    void push(Package &&p) override;
+    void push(Package&& p) override;
   private:
     QueueType qt;
-    std::list<IPackageStockpile*> packages;
+    std::list<Package> packages;
 };
 
 

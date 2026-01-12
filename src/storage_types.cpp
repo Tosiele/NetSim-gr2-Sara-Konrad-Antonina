@@ -16,17 +16,21 @@ void return_queue_type(QueueType t) {
 }
 
 Package PackageQueue::pop() {
+    Package p;
   if (qt == QueueType::Fifo) {
-      Package p = packages.pop_front();
+      p = std::move(packages.front());
+      packages.pop_front();
   }
   else if (qt == QueueType::Lifo) {
-      Package p = packages.pop_back();
+      p = std::move(packages.back());
+      packages.pop_back();
   }
   else {
     throw std::invalid_argument("Invalid QueueType");
   }
+    return p;
   }
 
 void PackageQueue::push( Package&& p) {
-  packages.push_front(p);
+  packages.push_front(std::move(p));
 }
