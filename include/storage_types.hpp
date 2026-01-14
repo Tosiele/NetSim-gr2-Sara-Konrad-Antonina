@@ -16,7 +16,7 @@ void return_queue_type(QueueType t);
 
 class IPackageStockpile {
   public:
-    using const_iterator = std::list<IPackageStockpile*>::const_iterator;
+    using const_iterator = std::list<Package>::const_iterator;
     virtual void push(Package&& p) = 0;
     virtual ~IPackageStockpile() = default;
 
@@ -28,7 +28,7 @@ class IPackageStockpile {
     const unsigned long long size() const { return packages.size(); }
     const bool empty() const { return packages.empty(); }
   private:
-  std::list<IPackageStockpile*> packages;
+  std::list<Package> packages;
 };
 
 class IPackageQueue : public IPackageStockpile {

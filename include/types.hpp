@@ -5,6 +5,7 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 #include <random>
+#include <functional>
 
 /// used to represent IDs of elements (packages)
 using ElementID = int;
@@ -13,6 +14,7 @@ using Time = int;
 /// represents time needed to complete tasks (like worker processing)
 using TimeOffset = int;
 
+using ProbabilityGenerator = std::function<double()>;
 
 std::random_device rd;
 std::mt19937 rng(rd());
