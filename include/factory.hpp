@@ -6,6 +6,9 @@
 
 template<class Node>
 class NodeCollection {
+    
+    private:
+        container_t container;
 
     public:
         using container_t = typename std::list<Node>;
@@ -20,8 +23,7 @@ class NodeCollection {
         
         const_iterator cbegin() const { return container.cbegin(); }
         const_iterator cend() const { return container.cend(); }
-    private:
-
+    
 };
 
 class Factory{
