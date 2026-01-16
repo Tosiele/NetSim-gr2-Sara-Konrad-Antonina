@@ -21,6 +21,21 @@ class NodeCollection {
         const_iterator cbegin() const { return container.cbegin(); }
         const_iterator cend() const { return container.cend(); }
     
+
+        NodeCollection<Node>::iterator find_by_id(element_ID id) {
+
+            return std::find_if(container.begin(), container.end(),
+                                [id](const Node& ele) {return ele.get_id() == id;});
+
+        }
+
+        NodeCollection<Node>::const_iterator find_by_id(element_ID id) const {
+
+            return std::find_if(container.begin(), container.end(),
+                                [id](const Node& ele) {return ele.get_id() == id;});
+
+        }
+
     private:
         container_t container;
 };
