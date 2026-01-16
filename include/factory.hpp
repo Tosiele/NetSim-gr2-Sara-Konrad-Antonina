@@ -36,6 +36,10 @@ class NodeCollection {
 
         }
 
+        void add(Node&& node){
+            container.push_back(std::move(node));
+        }
+
     private:
         container_t container;
 };
