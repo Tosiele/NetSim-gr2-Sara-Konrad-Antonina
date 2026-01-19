@@ -8,6 +8,7 @@
 #include <map>
 #include <functional>
 #include <cmath>
+#include <memory>
 #include <optional>
 
 extern std::random_device rd;
@@ -21,13 +22,15 @@ enum class ReceiverType {
 
 class IPackageReceiver {
   public:
-    virtual void receive_package(Package& package) = 0;
+  virtual void receive_package(Package& package) = 0;
     IPackageStockpile::const_iterator begin() {return packages.begin();}
     IPackageStockpile::const_iterator end() {return packages.end();}
     const IPackageStockpile::const_iterator cbegin() const {return packages.cbegin();}
     const IPackageStockpile::const_iterator cend() const {return packages.cend();}
     ElementID get_id() const {return packages.front().get_id();}
     virtual ReceiverType get_receiver_type() const = 0;
+
+    virtual ~IPackageReceiver() = default;
 
   private:
     std::list<Package> packages;
@@ -37,7 +40,7 @@ class ReceiverPreferences {
   public:
     using preferences_t = std::map<IPackageReceiver*, double>;
     using const_iterator = preferences_t::const_iterator;
-
+    ReceiverPreferences() {pg = probability_generator;};
     ReceiverPreferences(ProbabilityGenerator prob_gen) {pg=prob_gen;};
 
     void add_receiver(IPackageReceiver* receiver);
@@ -67,6 +70,7 @@ class Receiver:public IPackageReceiver {
 
 class PackageSender {
   public:
+  PackageSender() = default;
   PackageSender(PackageSender&&) = default;
   void send_package();
   std::optional<Package>& get_sending_buffer(){return buffer;}
@@ -76,5 +80,16 @@ class PackageSender {
   ReceiverPreferences receiver_preferences;
   std::optional<Package> buffer;
 };
+
+class Storehouse:public IPackageReceiver {
+  public:
+  Storehouse(ElementID i, std::unique_ptr<IPackageStockpile> s) {id=i;d=std::move(s);};
+  ReceiverType get_receiver_type() const override {return ReceiverType::STOREHOUSE;};
+  void receive_package(Package& package) override;
+  private:
+  ElementID id;
+  std::unique_ptr<IPackageStockpile> d;
+};
+
 
 #endif //NODES_HPP
