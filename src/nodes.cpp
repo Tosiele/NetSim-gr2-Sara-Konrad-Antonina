@@ -37,3 +37,16 @@ IPackageReceiver* ReceiverPreferences::choose_receiver() {
   return std::next(prefs.begin(), index)->first;
 }
 
+void PackageSender::push_package(Package&& package) {
+  buffer = std::move(package);
+}
+
+void PackageSender::send_package() {
+  IPackageReceiver* R = receiver_preferences.choose_receiver();
+  R->receive_package(buffer.value());
+  buffer.reset();
+}
+
+void Storehouse::receive_package(Package& package) {
+  d->push(std::move(package));
+}
