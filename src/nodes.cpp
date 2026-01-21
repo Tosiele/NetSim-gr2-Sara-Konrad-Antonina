@@ -43,10 +43,10 @@ void PackageSender::push_package(Package&& package) {
 
 void PackageSender::send_package() {
   IPackageReceiver* R = receiver_preferences.choose_receiver();
-  R->receive_package(buffer.value());
+  R->receive_package(std::move(buffer.value()));
   buffer.reset();
 }
 
-void Storehouse::receive_package(Package& package) {
-  d->push(std::move(package));
+void Storehouse::receive_package(Package&& package) {
+  packages->push(std::move(package));
 }
