@@ -52,8 +52,32 @@ TEST(ReceiverPreferencesTest, choosing_correctness) {
     EXPECT_EQ(Ro2,&R2);
     EXPECT_EQ(Ro3,&R2);
     EXPECT_EQ(Ro4,&R3);
-
-
-
 }
+
+TEST(PackageSenderTest, buffer_emptying) {
+    auto Q1 = std::make_unique<PackageQueue>(QueueType::Fifo);
+    ExampleSender sender;
+    Storehouse S = Storehouse(1,std::move(Q1));
+    sender.receiver_preferences.add_receiver(&S);
+    sender.pusher(); //when actual class implemented, replace this with an actual method that invokes push_package
+    auto b = std::move(sender.get_sending_buffer());
+    ASSERT_TRUE(b.has_value());
+    sender.send_package();
+    auto b2 = std::move(sender.get_sending_buffer());
+    ASSERT_FALSE(b2.has_value());
+}
+
+TEST(StorehoustTest, correct_storage) {
+    auto Q1 = std::make_unique<PackageQueue>(QueueType::Fifo);
+    Storehouse S1 = Storehouse(1,std::move(Q1));
+    auto Q2 = std::make_unique<PackageQueue>(QueueType::Lifo);
+    Storehouse S2 = Storehouse(1,std::move(Q2));
+    S1.receive_package(Package(7));
+    S1.receive_package(Package(8));
+    S2.receive_package(Package(7));
+    S2.receive_package(Package(8));
+    EXPECT_EQ(*S1.begin(), Package(8));
+    EXPECT_EQ(*S2.begin(), Package(8)); //both queue types are the same, because the difference is in pop method, not push
+}
+
 

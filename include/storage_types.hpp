@@ -19,24 +19,20 @@ class IPackageStockpile {
     virtual void push(Package&& p) = 0;
     virtual ~IPackageStockpile() = default;
 
-    const_iterator begin() { return packages.begin(); }
-    const_iterator end() { return packages.end(); }
-    const const_iterator cbegin() const { return packages.cbegin(); }
-    const const_iterator cend() const { return packages.cend(); }
+    virtual const_iterator begin() =0;
+    virtual const_iterator end() =0;
+    virtual const const_iterator cbegin() const =0;
+    virtual const const_iterator cend() const =0;
 
-    const unsigned long long size() const { return packages.size(); }
-    const bool empty() const { return packages.empty(); }
-  private:
-  std::list<Package> packages;
+    virtual const unsigned long long size() const =0;
+    virtual const bool empty() const =0;
 };
 
 class IPackageQueue : public IPackageStockpile {
   public:
     virtual Package pop() = 0;
-    const auto get_queue_type() { return return_queue_type(qt); }
+    virtual const void get_queue_type() =0;
     virtual ~IPackageQueue() {}
-  private:
-    QueueType qt;
 };
 
 class PackageQueue : public IPackageQueue {
@@ -44,6 +40,16 @@ class PackageQueue : public IPackageQueue {
     explicit PackageQueue(const QueueType t) : qt(t) { qt = t; }
     Package pop() override;
     void push(Package&& p) override;
+
+  const void get_queue_type()override { return return_queue_type(qt); }
+
+  const_iterator begin()  override { return packages.begin(); }
+  const_iterator end()  override { return packages.end(); }
+  const const_iterator cbegin() const override { return packages.cbegin(); }
+  const const_iterator cend() const override { return packages.cend(); }
+
+  const unsigned long long size() const override { return packages.size(); }
+  const bool empty() const override { return packages.empty(); }
   private:
     QueueType qt;
     std::list<Package> packages;

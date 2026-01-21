@@ -22,18 +22,16 @@ enum class ReceiverType {
 
 class IPackageReceiver {
   public:
-  virtual void receive_package(Package& package) = 0;
-    IPackageStockpile::const_iterator begin() {return packages.begin();}
-    IPackageStockpile::const_iterator end() {return packages.end();}
-    const IPackageStockpile::const_iterator cbegin() const {return packages.cbegin();}
-    const IPackageStockpile::const_iterator cend() const {return packages.cend();}
-    ElementID get_id() const {return packages.front().get_id();}
-    virtual ReceiverType get_receiver_type() const = 0;
+  virtual void receive_package(Package&& package) = 0;
+  virtual IPackageStockpile::const_iterator begin() =0;
+  virtual IPackageStockpile::const_iterator end() =0;
+  virtual const IPackageStockpile::const_iterator cbegin() const =0;
+  virtual const IPackageStockpile::const_iterator cend() const =0;
+  virtual ElementID get_id() const =0;
+  virtual ReceiverType get_receiver_type() const = 0;
 
-    virtual ~IPackageReceiver() = default;
+  virtual ~IPackageReceiver() = default;
 
-  private:
-    std::list<Package> packages;
   };
 
 class ReceiverPreferences {
@@ -63,8 +61,15 @@ class Receiver:public IPackageReceiver {
    public:
      Receiver() = default;
      Receiver& operator=(Receiver& other) = default;
-     void receive_package(Package& package) override {;};
-     ReceiverType get_receiver_type() const override {return ReceiverType::WORKER;};
+     void receive_package(Package&& package) override {;};
+    IPackageStockpile::const_iterator begin() override {return packages.begin();}
+    IPackageStockpile::const_iterator end() override {return packages.end();}
+    const IPackageStockpile::const_iterator cbegin() const override {return packages.cbegin();}
+    const IPackageStockpile::const_iterator cend() const override {return packages.cend();}
+    ElementID get_id() const override {return 1;}
+    ReceiverType get_receiver_type() const override {return ReceiverType::WORKER;};
+  private:
+  std::list<Package> packages;
 };
 
 
@@ -74,21 +79,33 @@ class PackageSender {
   PackageSender(PackageSender&&) = default;
   void send_package();
   std::optional<Package>& get_sending_buffer(){return buffer;}
+  ReceiverPreferences receiver_preferences;
   protected:
   void push_package(Package&& package);
   private:
-  ReceiverPreferences receiver_preferences;
   std::optional<Package> buffer;
 };
 
 class Storehouse:public IPackageReceiver {
   public:
-  Storehouse(ElementID i, std::unique_ptr<IPackageStockpile> s) {id=i;d=std::move(s);};
+  Storehouse(ElementID i, std::unique_ptr<IPackageStockpile> s = std::make_unique<PackageQueue>(QueueType::Fifo)) {id=i;packages=std::move(s);};
   ReceiverType get_receiver_type() const override {return ReceiverType::STOREHOUSE;};
-  void receive_package(Package& package) override;
+  void receive_package(Package&& package) override;
+  IPackageStockpile::const_iterator begin() override {return packages->begin();}
+  IPackageStockpile::const_iterator end() override {return packages->end();}
+  const IPackageStockpile::const_iterator cbegin() const override {return packages->cbegin();}
+  const IPackageStockpile::const_iterator cend() const override {return packages->cend();}
+  ElementID get_id() const override {return id;}
   private:
   ElementID id;
-  std::unique_ptr<IPackageStockpile> d;
+  std::unique_ptr<IPackageStockpile> packages;
+};
+
+//ONLY FOR TESTS
+class ExampleSender:public PackageSender {
+  public:
+  ExampleSender() = default;
+  void pusher() {push_package(Package(7));}
 };
 
 
