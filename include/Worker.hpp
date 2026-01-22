@@ -58,6 +58,9 @@ class Worker: public IPackageReceiver, public PackageSender{
     IPackageStockpile::const_iterator cbegin() const override;
     IPackageStockpile::const_iterator cend() const override;
 
+    // MODIFICATION TO SHARE DATA
+    std::optional<package> const& get_processing_buffer() const;
+    
     private:
     ElementID id_;
     TimeOffset pd_;
@@ -67,7 +70,7 @@ class Worker: public IPackageReceiver, public PackageSender{
 
     Time t_processing_start_;
 
-
+    
 };
 
 #endif
