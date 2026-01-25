@@ -145,3 +145,19 @@ Factory load_factory_structure(std::istream &is) {
     }
     return F;
 }
+
+void ramp_save_func (Ramp &ramp, std::ostream &os) {
+    os << "LOADING RAMP #" << ramp.get_id() << "\n";
+    os << "\tDelivery interval: " << ramp.get_delivery_interval() << "\n" ;
+    os << receiver_save_func(ramp.get_receiver_preferences()) << "\n";
+}
+
+void save_factory_structure (Factory &factory, std::ostream &os) {
+    os<<"\n== LOADING RAMPS ==\n\n";
+    std::for_each(factory.ramp_cbegin,factory.ramp_cend,ramp_save_func);
+    os<<"\n== WORKERS ==\n\n";
+    std::for_each(factory.worker_cbegin,factory.worker_cend,worker_save_func);
+    os<<"\n== STOREHOUSES ==\n\n";
+    std::for_each(factory.storehouse_cbegin,factory.storehouse_cend,storehouse_save_func);
+
+}
