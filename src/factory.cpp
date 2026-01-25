@@ -145,11 +145,35 @@ Factory load_factory_structure(std::istream &is) {
     }
     return F;
 }
+std::string receiver_save_func(const ReceiverPreferences &rp) {
+    std::ostringstream ss;
+    ss <<"\tReceivers:\n";
+    std::map<ReceiverType,std::string> receivers{
+        {ReceiverType::WORKER,"worker"},
+        {ReceiverType::STOREHOUSE,"storehouse"}
+        };
+    for (auto it = rp.begin(); it != rp.end(); ++it) {
+        ReceiverType r = it->first->get_receiver_type();
+        ElementID id = it->first->get_id();
+        ss<<"\t\t"<<receivers.at(r)<<" #"<<id<<"\n";
+    }
+    return ss.str();
+}
 
 void ramp_save_func (Ramp &ramp, std::ostream &os) {
     os << "LOADING RAMP #" << ramp.get_id() << "\n";
     os << "\tDelivery interval: " << ramp.get_delivery_interval() << "\n" ;
     os << receiver_save_func(ramp.get_receiver_preferences()) << "\n";
+}
+void worker_save_func (Worker &worker, std::ostream &os) {
+    os << "WORKER #" << worker.get_id() << "\n";
+    os << "\tProcessing time:" << worker.get_processing_duration() << "\n";
+    os << "\tQueue type:" << worker.get_queue() << "\n";
+    os << receiver_save_func(worker.get_receiver_preferences()) << "\n";
+}
+
+void storehouse_save_func (Storehouse &storehouse, std::ostream &os) {
+    os << "STOREHOUSE #" << storehouse.get_id() << "\n";
 }
 
 void save_factory_structure (Factory &factory, std::ostream &os) {
@@ -161,3 +185,4 @@ void save_factory_structure (Factory &factory, std::ostream &os) {
     std::for_each(factory.storehouse_cbegin,factory.storehouse_cend,storehouse_save_func);
 
 }
+
