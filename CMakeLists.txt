@@ -11,6 +11,7 @@ add_library(NetSim
         src/storage_types.cpp
         src/Package.cpp
         src/nodes.cpp
+        src/factory.cpp
 
 )
 
@@ -21,6 +22,7 @@ target_include_directories(NetSim
 add_executable(NetSim_tests
         test/section_1_tests.cpp
         test/section_2_tests.cpp
+        test/section_4_tests.cpp
 )
 
 target_link_libraries(NetSim_tests
