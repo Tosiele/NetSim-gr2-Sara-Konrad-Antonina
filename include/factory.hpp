@@ -2,8 +2,10 @@
 // Created by konfe on 24.01.2026.
 //
 
+
 #ifndef FACTORY
 #define FACTORY
+
 #include <map>
 #include <string>
 #include <iostream>
@@ -21,6 +23,7 @@ enum class ElementType {
     LINK
 };
 struct ParsedLineData {
+
     // struct that stores the type of element
     // along with all its properties as a map
     ElementType element_type;
@@ -70,10 +73,12 @@ ParsedLineData parse_line(const std::string &line);
 Factory load_factory_structure(std::istream &is);
 
 // helper functions for save_factory_structure
+
 std::string receiver_save_func(auto &rp);
 void ramp_save_func(Ramp &ramp, std::ostream &os);
 void worker_save_func(Worker &worker, std::ostream &os);
 void storehouse_save_func(Storehouse &storehouse, std::ostream &os);
+
 
 // function that makes a factory structure report
 void save_factory_structure(Factory &factory, std::ostream &os);
