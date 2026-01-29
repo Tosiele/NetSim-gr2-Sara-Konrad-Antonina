@@ -1,8 +1,3 @@
-//
-// Created by konfe on 24.01.2026.
-//
-
-
 #ifndef FACTORY
 #define FACTORY
 
@@ -13,6 +8,9 @@
 #include <vector>
 
 #include "nodes.hpp"
+#include "Ramp.hpp"
+#include "Worker.hpp"
+#include "Package.hpp"
 
 enum class ElementType {
     //enumeration class that stores element types
@@ -35,34 +33,71 @@ struct ParsedLineData {
 
 template<class Node>
 class NodeCollection {
-
     public:
         using container_t = typename std::list<Node>;
         using iterator = typename container_t::iterator;
         using const_iterator = typename container_t::const_iterator;
-
+        // methods to add and remove nodes
+        void add(const Node&& node) { container.push_back(std::move(node)); }
+        void remove_by_id(ElementID id) {
+            container.remove_if([id](const Node& node){ return node.get_id() == id; });
+        }
+        // methods to find nodes by id
+        iterator find_by_id(ElementID id) {
+            return std::find_if(container.begin(), container.end(),
+                                [id](const Node& node){ return node.get_id() == id; });
+        }
+        const_iterator find_by_id(ElementID id) const {
+            return std::find_if(container.cbegin(), container.cend(),
+                                [id](const Node& node){ return node.get_id() == id; });
+        }
+        // iterator methods
         iterator begin() { return container.begin(); }
         iterator end() { return container.end(); }
-        
-        const_iterator begin() const { return container.cbegin(); }
-        const_iterator end() const { return container.cend(); }
-        
         const_iterator cbegin() const { return container.cbegin(); }
         const_iterator cend() const { return container.cend(); }
     private:
+        container_t container;
+    };
 
-};
 
 class Factory{
     public:
+        // Ramp methods
+        void add_ramp(const Ramp&& ramp);
+        void remove_ramp(ElementID id);
+        NodeCollection<Ramp>::iterator find_ramp_by_id(ElementID id);
+        NodeCollection<Ramp>::const_iterator find_ramp_by_id(ElementID id) const;
+        NodeCollection<Ramp>::const_iterator ramp_cbegin() const { return Ramps.cbegin(); }
+        NodeCollection<Ramp>::const_iterator ramp_cend() const { return Ramps.cend(); }
+        // Worker methods
+        void add_worker(const Worker&& worker);
+        void remove_worker(ElementID id);
+        NodeCollection<Worker>::iterator find_worker_by_id(ElementID id);
+        NodeCollection<Worker>::const_iterator find_worker_by_id(ElementID id) const;
+        NodeCollection<Worker>::const_iterator worker_cbegin() const { return Workers.cbegin(); }
+        NodeCollection<Worker>::const_iterator worker_cend() const { return Workers.cend(); }
+        // Storehouse methods
+        void add_storehouse(const Storehouse&& storehouse);
+        void remove_storehouse(ElementID id);
+        NodeCollection<Storehouse>::iterator find_storehouse_by_id(ElementID id);
+        NodeCollection<Storehouse>::const_iterator find_storehouse_by_id(ElementID id) const;
+        NodeCollection<Storehouse>::const_iterator storehouse_cbegin() const { return Storehouses.cbegin(); }
+        NodeCollection<Storehouse>::const_iterator storehouse_cend() const { return Storehouses.cend(); }
 
+        // other methods
+        bool is_consistent();
+        void do_deliveries(Time t);
+        void do_package_passing();
+        void do_work(Time t);
 
     private:
+        NodeCollection<Ramp> Ramps;
+        NodeCollection<Worker> Workers;
+        NodeCollection<Storehouse> Storehouses;
+
         template<class Node>
-        void remove_receiver(NodeCollection<Node>& collection, element_ID id);
-
-
-
+        void remove_receiver(NodeCollection<Node>& collection, ElementID id);
 };
 
 
