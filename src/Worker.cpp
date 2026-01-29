@@ -70,3 +70,7 @@ IPackageStockpile::const_iterator Worker::cend() const {
     // and queue preference must be available to read
 get_processing_buffer() const
     return currently_processed_package_
+
+QueueType Worker::get_queue_type() const {
+    return queue_->get_queue_type();
+}
