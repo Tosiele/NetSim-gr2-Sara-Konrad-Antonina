@@ -63,6 +63,15 @@ IPackageStockpile::const_iterator Worker::cend() const {
     return queue_->cend();
 }
 
+// add get_processing_buffer() module that returns std::optional& 
+// - the product that's being currently processed
+// id, processing pace, list of receivers, 
+// and queue preference must be available to read
 std::optional<Package> const& Worker::get_processing_buffer() const {
     return currently_processed_package_;
 }
+
+QueueType Worker::get_queue_type() const {
+    return queue_->get_queue_type();
+}
+
